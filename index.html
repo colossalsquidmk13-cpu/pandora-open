@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pandora</title>
+<style>
+  :root { --bg: #ffffff; --fg: #1f1f1e; --muted: #6b6b66; --accent: #7c3aed; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1f1f1e; --fg: #e8e6e1; --muted: #a8a59e; } }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif; }
+  main { min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+         justify-content: center; gap: 20px; padding: 24px 16px; box-sizing: border-box; text-align: center; }
+  p { margin: 0; color: var(--muted); font-size: 15px; }
+  a.btn { display: inline-block; padding: 18px 40px; border-radius: 14px; background: var(--accent);
+          color: #fff; font-size: 20px; font-weight: 600; text-decoration: none; }
+</style>
+</head>
+<body>
+<main>
+  <p id="label">Journal</p>
+  <a class="btn" id="open" href="#">Obsidian で開く</a>
+  <p>開かないときは、もう一度ボタンを押してください</p>
+</main>
+<script>
+  // 使い方: ?vault=保管庫名&day=YYYY-MM-DD
+  // Obsidian の panda-open プラグイン（obsidian://panda-journal）で、その日の Journal を開く
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var vault = q.get("vault") || "";
+    var day = /^\d{4}-\d{2}-\d{2}$/.test(q.get("day") || "") ? q.get("day") : "";
+    var url = "obsidian://panda-journal?vault=" + encodeURIComponent(vault) + (day ? "&day=" + day : "");
+    document.getElementById("open").href = url;
+    if (day) document.getElementById("label").textContent = day + " の Journal";
+    // 開けるブラウザなら、ボタンを押さなくてもそのまま開く
+    setTimeout(function () { location.href = url; }, 150);
+  })();
+</script>
+</body>
+</html>
