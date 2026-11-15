@@ -24,15 +24,23 @@
   <p>開かないときは、もう一度ボタンを押してください</p>
 </main>
 <script>
-  // 使い方: ?vault=保管庫名&day=YYYY-MM-DD
-  // Obsidian の panda-open プラグイン（obsidian://panda-journal）で、その日の Journal を開く
+  // 使い方:
+  //   ?vault=保管庫名&day=YYYY-MM-DD   … その日の Journal（panda-open プラグインが同期を待ってから開く）
+  //   ?vault=保管庫名&file=ノートのパス … そのノートを開く（例：企業分析の調査ファイル）
   (function () {
     var q = new URLSearchParams(location.search);
     var vault = q.get("vault") || "";
+    var file = q.get("file") || "";
     var day = /^\d{4}-\d{2}-\d{2}$/.test(q.get("day") || "") ? q.get("day") : "";
-    var url = "obsidian://panda-journal?vault=" + encodeURIComponent(vault) + (day ? "&day=" + day : "");
+    var url;
+    if (file) {
+      url = "obsidian://open?vault=" + encodeURIComponent(vault) + "&file=" + encodeURIComponent(file);
+      document.getElementById("label").textContent = file.split("/").pop().replace(/\.md$/, "");
+    } else {
+      url = "obsidian://panda-journal?vault=" + encodeURIComponent(vault) + (day ? "&day=" + day : "");
+      if (day) document.getElementById("label").textContent = day + " の Journal";
+    }
     document.getElementById("open").href = url;
-    if (day) document.getElementById("label").textContent = day + " の Journal";
     // 開けるブラウザなら、ボタンを押さなくてもそのまま開く
     setTimeout(function () { location.href = url; }, 150);
   })();
